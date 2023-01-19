@@ -7,19 +7,33 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import axios from 'axios';
+import {Link} from 'react-router-dom';
+import { Button } from '@mui/material';
+import restaurante from '../../../componentes/ListaRestaurantes/Restaurante';
+import http from '../../../http';
 
 const AdminRestaurantes = () =>  {
 
   // Busca restaurante na api na url pora adm (sem paginação)
   useEffect(() => {
-    axios.get <IRestaurante[]> ('http://localhost:7000/api/v2/restaurantes/')
+    http.get <IRestaurante[]> ('restaurantes/')
       .then(response =>
         setRestaurantes(response.data)
       );
   }, []);
 
   const [restaurantes, setRestaurantes] = useState <IRestaurante[]> ([]);
+
+  function excluir(restauranteASerExcluido: IRestaurante) {
+    http.delete(`restaurantes/${restauranteASerExcluido.id}/`)
+      .then(() => {
+        // Filtra somente os restaurante diferentes daquele a ser excluido
+        const listaRestaurantes = restaurantes.filter(
+          restaurante => restaurante.id !== restauranteASerExcluido.id);
+        // Seta restaurantes como listaToda - restauranteASerExcluido
+        setRestaurantes([...listaRestaurantes]);
+      });
+  }
 
   return(
     <TableContainer component={Paper}>
@@ -29,6 +43,12 @@ const AdminRestaurantes = () =>  {
             <TableCell>
             Nome
             </TableCell>
+            <TableCell>
+              Editar
+            </TableCell>
+            <TableCell>
+              Excluir
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -36,6 +56,18 @@ const AdminRestaurantes = () =>  {
             <TableRow key={restaurante.id}>
               <TableCell>
                 {restaurante.nome}
+              </TableCell>
+              <TableCell>
+                [ <Link to={`/admin/restaurantes/${restaurante.id}`}> Editar </Link>  ]
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => excluir(restaurante)} // Chamado o metodo excluir, passando o restaurante clicado
+                >
+                  Excluir
+                </Button>
               </TableCell>
             </TableRow>
           )}
