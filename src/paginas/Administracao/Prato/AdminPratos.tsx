@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import {IRestaurante} from '../../../interfaces/IRestaurante';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,27 +9,29 @@ import Paper from '@mui/material/Paper';
 import {Link} from 'react-router-dom';
 import { Button } from '@mui/material';
 import http from '../../../http';
+import {IPrato} from '../../../interfaces/IPrato';
 
-const AdminRestaurantes = () =>  {
+const AdminPratos= () =>  {
 
-  const [restaurantes, setRestaurantes] = useState <IRestaurante[]> ([]);
+  const [pratos, setPratos] = useState <IPrato[]> ([]);
 
-  // Busca restaurante na api na url pora adm (sem paginação)
+  // Busca pratos na api na url pora adm
   useEffect(() => {
-    http.get <IRestaurante[]> ('restaurantes/')
+    http.get <IPrato[]> ('pratos/')
       .then(response =>
-        setRestaurantes(response.data)
+        setPratos(response.data)
       );
   }, []);
 
-  function excluir(restauranteASerExcluido: IRestaurante) {
-    http.delete(`restaurantes/${restauranteASerExcluido.id}/`)
+
+  function excluir(pratoASerExcluido: IPrato) {
+    http.delete(`pratos/${pratoASerExcluido.id}/`)
       .then(() => {
-        // Filtra somente os restaurante diferentes daquele a ser excluido
-        const listaRestaurantes = restaurantes.filter(
-          restaurante => restaurante.id !== restauranteASerExcluido.id);
-        // Seta restaurantes como listaToda - restauranteASerExcluido
-        setRestaurantes([...listaRestaurantes]);
+        // Filtra somente os pratos diferentes daquele a ser excluido
+        const listaPratos = pratos.filter(
+          prato => prato.id !== pratoASerExcluido.id);
+        // Seta prtos como listaToda - pratoASerExcluido
+        setPratos([...listaPratos]);
       });
   }
 
@@ -40,7 +41,13 @@ const AdminRestaurantes = () =>  {
         <TableHead>
           <TableRow>
             <TableCell>
-            Nome
+              Nome
+            </TableCell>
+            <TableCell>
+              Tag
+            </TableCell>
+            <TableCell>
+              Imagem
             </TableCell>
             <TableCell>
               Editar
@@ -51,19 +58,25 @@ const AdminRestaurantes = () =>  {
           </TableRow>
         </TableHead>
         <TableBody>
-          {restaurantes.map(restaurante => // Gera uma linha para cada restaurante
-            <TableRow key={restaurante.id}>
+          {pratos.map(prato => // Gera uma linha para cada prato
+            <TableRow key={prato.id}>
               <TableCell>
-                {restaurante.nome}
+                {prato.nome}
               </TableCell>
               <TableCell>
-                [ <Link to={`/admin/restaurantes/${restaurante.id}`}> Editar </Link>  ]
+                {prato.tag}
+              </TableCell>
+              <TableCell>
+                [<a href={prato.imagem} target="blank" rel="noreferrer"> Ver imagem </a>]
+              </TableCell>
+              <TableCell>
+                [ <Link to={`/admin/pratos/${prato.id}`}> Editar </Link>  ]
               </TableCell>
               <TableCell>
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => excluir(restaurante)} // Chamado o metodo excluir, passando o restaurante clicado
+                  onClick={() => excluir(prato)} // Chamado o metodo excluir, passando o prato clicado
                 >
                   Excluir
                 </Button>
@@ -76,4 +89,4 @@ const AdminRestaurantes = () =>  {
   );
 };
 
-export default AdminRestaurantes;
+export default AdminPratos;

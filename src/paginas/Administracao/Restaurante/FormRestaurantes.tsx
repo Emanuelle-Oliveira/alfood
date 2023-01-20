@@ -2,7 +2,6 @@ import {AppBar, Box, Button, Container, Link, Paper, TextField, Toolbar, Typogra
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import http from '../../../http';
-import { Link as RouterLink } from 'react-router-dom';
 
 export default function FormRestaurantes () {
 
